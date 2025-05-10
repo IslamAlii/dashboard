@@ -84,7 +84,7 @@ if subscription_type == 'Retention':
             columns='months_count_from_subscription',
             aggfunc='count'
         )
-        st.subheader("🔁 Retention Achieved")
+        st.write("🔁 Retention Achieved")
         st.write(renewed_pivot)
     
         renewed_revenue_pivot = filtered_data.pivot_table(
@@ -93,7 +93,7 @@ if subscription_type == 'Retention':
             columns='months_count_from_subscription',
             aggfunc='sum'
         )
-        st.subheader("💰 Renewed Revenue")
+        st.write("💰 Renewed Revenue")
         st.write(renewed_revenue_pivot)
 
 else:
@@ -157,10 +157,10 @@ else:
             columns='months_count_from_subscription',
             aggfunc='count'
         )
-        st.subheader("📉 Churned Subscriptions")
+        st.write("📉 Churned Subscriptions")
         st.write(churned_pivot)
 
         # Pivot table for churned AOV projection
         churned_aov_projection_pivot = (churned_pivot * aov).applymap(lambda x: int(x) if pd.notna(x) else None)
-        st.subheader("💸 Churned AOV projection")
+        st.write("💸 Churned AOV projection")
         st.write(churned_aov_projection_pivot)
