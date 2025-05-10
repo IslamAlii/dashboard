@@ -6,10 +6,13 @@ st.title("📊 Subscription Analysis")
 
 students_df, subscriptions_df = load_data()
 
+# Sort by student_id and created_at
+subscriptions_df = subscriptions_df.sort_values(by=['student_id', 'created_at'])
+
+# Assign subscription number using cumcount (starts from 0, so add 1)
+subscriptions_df['subscription_count'] = subscriptions_df.groupby('student_id').cumcount()
 subscriptions_df['subscribed_at'] = subscriptions_df.groupby('student_id')['created_at'].transform('min')
 subscriptions_df = subscriptions_df.sort_values(by=['student_id', 'expired_at'])
-
-
 
 # Prepare total subscriptions
 total_subs_df = subscriptions_df.copy()
@@ -166,3 +169,13 @@ if show_percentage:
     st.write(get_percentage_pivot_for_same_cohort(churned_aov_projection_pivot))
 else:
     st.write(churned_aov_projection_pivot)
+
+# Testing Purpose
+subscription_number_pivot = renewed_df.pivot_table(
+    values='student_id',
+    index='cohort_month',
+    columns='subscription_count',
+    aggfunc='count'
+)
+st.subheader("🛠️ Testing Purpose")
+st.write(subscription_number_pivot)

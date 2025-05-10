@@ -1,4 +1,4 @@
-from utils.data_utils import st, pd, current_day, load_data
+from utils.data_utils import st, pd, aov, current_day, load_data
 
 st.set_page_config(page_title="Filter Viewer", layout="wide", page_icon="🧮")
 st.title("🧮 Filter Viewer")
@@ -51,13 +51,13 @@ if subscription_type == 'Retention':
     else:
         filtered_data = filtered_data[filtered_data['months_count_from_subscription'] == months_count]
     
-    filtered_data = filtered_data[['student_id', 'subscribed_at', 'expired_at', 'currency', 'paid_amount', 'plan']]
+    # filtered_data = filtered_data[['student_id', 'subscribed_at', 'expired_at', 'currency', 'paid_amount', 'plan']]
 
     st.subheader(f"📊 Retention for Cohort {cohort_month} - Months Count {months_count}")
     if filtered_data.empty:
         st.info("No data available for this filter combination.")
     else:
-        st.write(filtered_data)
+        st.write(filtered_data[['student_id', 'subscribed_at', 'expired_at', 'currency', 'paid_amount', 'plan']])
 
         # Country distribution for retention
         country_table = students_df[students_df['id'].isin(filtered_data['student_id'])] \
@@ -78,6 +78,24 @@ if subscription_type == 'Retention':
         st.write("🗂️ Plan Distribution")
         st.write(currency_table.set_index('plan').T)
 
+        renewed_pivot = filtered_data.pivot_table(
+            values='student_id',
+            index='cohort_month',
+            columns='months_count_from_subscription',
+            aggfunc='count'
+        )
+        st.subheader("🔁 Retention Achieved")
+        st.write(renewed_pivot)
+    
+        renewed_revenue_pivot = filtered_data.pivot_table(
+            values='paid_amount',
+            index='cohort_month',
+            columns='months_count_from_subscription',
+            aggfunc='sum'
+        )
+        st.subheader("💰 Renewed Revenue")
+        st.write(renewed_revenue_pivot)
+
 else:
     # For churned data, same logic applies
     if cohort_month == 'All Cohort Months':
@@ -90,13 +108,13 @@ else:
     else:
         filtered_data = filtered_data[filtered_data['months_count_from_subscription'] == months_count]
 
-    filtered_data = filtered_data[['student_id', 'subscribed_at', 'expired_at', 'currency']]
+    # filtered_data = filtered_data[['student_id', 'subscribed_at', 'expired_at', 'currency']]
 
     st.subheader(f"📊 Churned for Cohort {cohort_month} - Months Count {months_count}")
     if filtered_data.empty:
         st.info("No data available for this filter combination.")
     else:
-        st.write(filtered_data)
+        st.write(filtered_data[['student_id', 'subscribed_at', 'expired_at', 'currency']])
 
         # Country distribution for churn
         country_table = students_df[students_df['id'].isin(filtered_data['student_id'])] \
@@ -131,3 +149,18 @@ else:
         country_table = country_table.sort_values(by='count', ascending=False)
         st.write("🔍 Lost Reason Breakdown")
         st.write(country_table.set_index('lost_reason').T)
+
+        # Pivot table for churned subscriptions
+        churned_pivot = filtered_data.pivot_table(
+            values='student_id',
+            index='cohort_month',
+            columns='months_count_from_subscription',
+            aggfunc='count'
+        )
+        st.subheader("📉 Churned Subscriptions")
+        st.write(churned_pivot)
+
+        # Pivot table for churned AOV projection
+        churned_aov_projection_pivot = (churned_pivot * aov).applymap(lambda x: int(x) if pd.notna(x) else None)
+        st.subheader("💸 Churned AOV projection")
+        st.write(churned_aov_projection_pivot)
