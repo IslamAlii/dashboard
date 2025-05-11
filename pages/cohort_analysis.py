@@ -188,5 +188,5 @@ churned_subscription_number_pivot = churned_df.pivot_table(
 st.subheader("💳 Retention Achieved - Subscription Count")
 st.write(renewed_subscription_number_pivot)
 
-st.subheader("💳 Retention Achieved - Subscription Count")
+st.subheader("💳 Churned Users - Subscription Count")
 st.write(churned_subscription_number_pivot)
