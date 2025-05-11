@@ -2,7 +2,7 @@ from utils.data_utils import st, pd, aov, current_day, load_data, get_percentage
 
 st.set_page_config(page_title="iSchool Dashboard", layout="wide", page_icon="📊")
 
-st.title("📊 Subscription Analysis")
+st.title("📊 Retention Forecast")
 
 students_df, subscriptions_df = load_data()
 
@@ -122,60 +122,72 @@ with col1:
     st.write(cohort_counts)
 
 # --- Country ---
-st.subheader("🌍 Country Distribution by Cohort Month (Sorted)")
+st.subheader("🌍 Retention Forecast - Country Distribution")
 if show_percentage:
     st.write(get_percentage_pivot_for_same_cohort(country_pivot))
 else:
     st.write(country_pivot)
 
 # --- Grade & Module ---
-st.subheader("🎓 Grade and Module Distribution by Cohort Month (Sorted)")
+st.subheader("🎓 Retention Forecast - Grade with Module Distribution")
 if show_percentage:
     st.write(get_percentage_pivot_for_same_cohort(grade_module_pivot))
 else:
     st.write(grade_module_pivot)
 
 # --- Currency ---
-st.subheader("💱 Currency Distribution by Cohort Month (Sorted)")
+st.subheader("💱 Retention Forecast - Currency Distribution")
 if show_percentage:
     st.write(get_percentage_pivot_for_same_cohort(currency_pivot))
 else:
     st.write(currency_pivot)
 
 # --- Retention Achieved ---
-st.subheader("🔁 Retention Achieved")
+st.subheader("🔁 Retention Achieved / CLV(Customer Lifetime Value)")
 if show_percentage:
     st.write(get_percentage_pivot_for_same_cohort(renewed_pivot))
 else:
     st.write(renewed_pivot)
 
 # --- Churned Subscriptions ---
-st.subheader("📉 Churned Subscriptions")
+st.subheader("📉 Churned Users")
 if show_percentage:
     st.write(get_percentage_pivot_for_same_cohort(churned_pivot))
 else:
     st.write(churned_pivot)
 
 # --- Renewed Revenue ---
-st.subheader("💰 Renewed Revenue by Cohort Month")
+st.subheader("💰 Renewed Revenue")
 if show_percentage:
     st.write(get_percentage_pivot_for_same_cohort(renewed_revenue_pivot))
 else:
     st.write(renewed_revenue_pivot)
 
 # --- Churned Revenue ---
-st.subheader("💸 Churned AOV projection")
+st.subheader("💸 Churned Users AOV projection")
 if show_percentage:
     st.write(get_percentage_pivot_for_same_cohort(churned_aov_projection_pivot))
 else:
     st.write(churned_aov_projection_pivot)
 
 # Testing Purpose
-subscription_number_pivot = renewed_df.pivot_table(
+renewed_subscription_number_pivot = renewed_df.pivot_table(
     values='student_id',
     index='cohort_month',
     columns='subscription_count',
     aggfunc='count'
 )
-st.subheader("🛠️ Testing Purpose")
-st.write(subscription_number_pivot)
+
+# Testing Purpose
+churned_subscription_number_pivot = churned.pivot_table(
+    values='student_id',
+    index='cohort_month',
+    columns='subscription_count',
+    aggfunc='count'
+)
+
+st.subheader("💳 Retention Achieved - Subscription Count")
+st.write(renewed_subscription_number_pivot)
+
+st.subheader("💳 Retention Achieved - Subscription Count")
+st.write(churned_subscription_number_pivot)
