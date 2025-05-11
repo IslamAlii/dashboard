@@ -118,7 +118,6 @@ show_percentage = st.sidebar.checkbox("Show Percentage Tables", value=False)
 col1, col2 = st.columns([1, 1])
 with col1:
     cohort_counts = total_subs_df.groupby('cohort_month')['student_id'].nunique()
-    st.subheader("👥 Cohort Breakdown by Student Count")
     st.write(cohort_counts)
 
 # --- Country ---
@@ -179,7 +178,7 @@ renewed_subscription_number_pivot = renewed_df.pivot_table(
 )
 
 # Testing Purpose
-churned_subscription_number_pivot = churned.pivot_table(
+churned_subscription_number_pivot = churned_df.pivot_table(
     values='student_id',
     index='cohort_month',
     columns='subscription_count',
